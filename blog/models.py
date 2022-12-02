@@ -18,6 +18,11 @@ class Blogs(models.Model):
         on_delete=models.CASCADE,
         related_name='blogs_owner'
     )
+    subscription = models.ManyToManyField(
+        CustomUser,
+        blank=True,
+        related_name='subscription'
+    )
 
     class Meta:
         ordering = ('updated_at',)
