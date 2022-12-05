@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from blog.models import Blogs
+from blog.models import Blogs, Posts
 from .serializers import (
     UserSerializer, BlogSerializer, AddAuthorToBlogSerializer, \
     TagSerializer, PostSerializer, CommentsSerializer, CreateSubscriptionSerializer
@@ -17,6 +17,7 @@ from users.permissions import (
     IsUserAuthorOrBlogOwner,
     IsAdminOrReadOnly
 )
+from .utils import PostFilter
 
 
 class BlogView(ModelViewSet):
@@ -77,3 +78,24 @@ class AddAuthorsToBlogView(UpdateAPIView):
         return Blogs.objects.prefetch_related('authors').filter(
             owner=self.request.user.id
         )
+
+
+class ListPostsOfBlogView(ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = PostSerializer
+    filter_backend = (
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter,
+    )
+    filterset_class = PostFilter
+    ordering_fields = ['title', 'created_at', 'likes']
+
+    def get_queryset(self):
+        queryset = Posts.objects.none()
+        if not getattr(self, 'swagger_fake_view', False):
+            queryset = Posts.objects.filter(
+                is_published=True,
+                blog=self.kwargs['pk']
+            )
+        return queryset
