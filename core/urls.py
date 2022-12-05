@@ -13,11 +13,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('api-auth/', include('rest_framework.urls')),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/', TokenObtainPairView.as_view(),
+         name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(),
+         name='token_refresh'),
 
-    path('auth/', include('users.urls')),
-    path('api/', include('blog.urls')),
+    path('', include('users.urls')),
+    path('', include('blog.urls')),
 ]
 
 urlpatterns += doc_urls
