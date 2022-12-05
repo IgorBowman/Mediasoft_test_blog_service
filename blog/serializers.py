@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Blogs, Posts, Comments, Tags
+from blog.models import Blogs, Posts, Comments, Tags
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -29,7 +29,7 @@ class AddAuthorToBlogSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        model: Blogs
+        model = Blogs
         fields = ['authors']
 
 
