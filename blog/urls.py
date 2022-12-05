@@ -4,12 +4,13 @@ from rest_framework.routers import SimpleRouter
 from blog.views import (
     BlogView, SubscribeToBlogView, FavoriteListBlogsView,
     AddAuthorsToBlogView, ListPostsOfBlogView, ListUserPostsView,
-    PostsView, LikePostView,
+    PostsView, LikePostView, TagsView,
 )
 
 router = SimpleRouter()
 router.register(r'blogs', BlogView, basename='Blogs')
-router.register(r'blogs', PostsView, basename='Posts')
+router.register(r'posts', PostsView, basename='Posts')
+router.register(r'tags', TagsView, basename='Tags')
 
 urlpatterns = [
     path('blogs/<int:pk>/subscribe', SubscribeToBlogView.as_view(),

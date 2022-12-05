@@ -5,10 +5,11 @@ from rest_framework.generics import ListAPIView, UpdateAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from blog.models import Blogs, Posts
+from blog.models import Blogs, Posts, Tags
 from .serializers import (
-    UserSerializer, BlogSerializer, AddAuthorToBlogSerializer, \
-    TagSerializer, PostSerializer, CommentsSerializer, CreateSubscriptionSerializer
+    UserSerializer, BlogSerializer, AddAuthorToBlogSerializer,
+    TagSerializer, PostSerializer, CommentsSerializer,
+    CreateSubscriptionSerializer
 )
 from users.permissions import (
     IsAuthenticatedAndOwner,
@@ -163,3 +164,8 @@ class LikePostView(UpdateAPIView):
 
         return Response(status=status.HTTP_200_OK)
 
+
+class TagsView(ModelViewSet):
+    queryset = Tags.objects.order_by('title').all()
+    permission_classes = [IsAdminOrReadOnly]
+    serializer_class = TagSerializer
