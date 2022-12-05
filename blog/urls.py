@@ -1,7 +1,10 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
 
-from blog.views import BlogView, SubscribeToBlogView
+from blog.views import (
+    BlogView, SubscribeToBlogView, FavoriteListBlogsView
+
+)
 
 router = SimpleRouter()
 router.register(r'blogs', BlogView, basename='Blogs')
@@ -9,8 +12,9 @@ router.register(r'blogs', BlogView, basename='Blogs')
 urlpatterns = [
     path('blogs/<int:pk>/subscribe', SubscribeToBlogView.as_view(),
          name='subscribe-to-blog'),
+    path('blogs/favorites', FavoriteListBlogsView.as_view(),
+         name='my-favorite-blogs'),
 
 ]
 
 urlpatterns += router.urls
-
