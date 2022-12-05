@@ -1,10 +1,11 @@
+from rest_framework.generics import UpdateAPIView
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from blog.models import Blogs
-from serializers import (
+from .serializers import (
     UserSerializer, BlogSerializer, AddAuthorToBlogSerializer, \
     TagSerializer, PostSerializer, CommentsSerializer, CreateSubscriptionSerializer
 )
@@ -40,3 +41,12 @@ class BlogView(ModelViewSet):
     def perform_create(self, serializer):
         serializer.validated_data['owner'] = self.request.user
         serializer.save()
+
+
+class SubscribeToBlogView(UpdateAPIView):
+    queryset = Blogs.objects.prefetch_related('subscriptions').all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = CreateSubscriptionSerializer
+    http_method_names = ['patch']
+
+
