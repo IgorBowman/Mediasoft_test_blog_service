@@ -14,6 +14,12 @@
 * Блоги на которые подписан пользователь (GET```/api/blogs/favorites```)
 * CRUD на блоги и посты (GET```/api/posts/my```)
 
+### Аутентификация/авторизация пользователя:
+* Создание пользователя. Отправить username и password (POST ```/auth/sign-in```)
+* Авторизация пользователя. Отправить username и password (POST ```/auth/login```), в ответе будут access и refresh токены
+* Для помещения токена в blacklist отправить (POST ```/auth/token/blacklist```) с refresh токеном
+* Для отправки авторизованного запроса, добавить к запросу заголовок Authorization со значением Bearer {access token}
+
 
 ### Подготовительные действия
 * Клонировать проект ```git clone```
