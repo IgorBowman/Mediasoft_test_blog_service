@@ -1,9 +1,8 @@
 from rest_framework.decorators import permission_classes
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.generics import UpdateAPIView, ListAPIView
+from rest_framework.generics import UpdateAPIView, ListAPIView, UpdateAPIView
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from blog.models import Blogs
@@ -51,6 +50,7 @@ class SubscribeToBlogView(UpdateAPIView):
     serializer_class = CreateSubscriptionSerializer
     http_method_names = ['patch']
 
+
 class FavoriteListBlogsView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = BlogSerializer
@@ -65,4 +65,15 @@ class FavoriteListBlogsView(ListAPIView):
     def get_queryset(self):
         return Blogs.objects.prefetch_related('subscriptions').filter(
             subscriptions__id=self.request.user.id
+        )
+
+
+class AddAuthorsToBlogView(UpdateAPIView):
+    permission_classes = [IsAuthenticatedAndOwner | IsUserAdmin]
+    serializer_class = AddAuthorToBlogSerializer
+    http_method_names = ['patch']
+
+    def get_queryset(self):
+        return Blogs.objects.prefetch_related('authors').filter(
+            owner=self.request.user.id
         )
