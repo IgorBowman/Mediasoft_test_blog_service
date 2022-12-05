@@ -1,4 +1,6 @@
 from django.utils import timezone
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, UpdateAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -136,7 +138,6 @@ class PostsView(ModelViewSet, MixinFilterData):
 
         serializer.save()
 
-
     def perform_update(self, serializer):
         post = self.get_object()
         is_published = serializer.validate_data.get('is_published', False)
@@ -147,5 +148,18 @@ class PostsView(ModelViewSet, MixinFilterData):
 
     def retrieve(self, request, *args, **kwargs):
         increase_views_of_post(post=self.get_object(),
-                                        user=self.request.user)
+                               user=self.request.user)
         return super().retrieve(request, *args, **kwargs)
+
+
+class LikePostView(UpdateAPIView):
+    queryset = Posts.objects.all()
+    permission_classes = [IsAuthenticated | IsUserAdmin]
+    serializer_class = PostSerializer
+
+    def patch(self, request, *args, **kwargs):
+        post = self.get_object()
+        increase_likes_of_post(post)
+
+        return Response(status=status.HTTP_200_OK)
+
