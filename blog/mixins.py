@@ -8,3 +8,4 @@ class MixinFilterData:
         SearchFilter,
         OrderingFilter,
     )
+    search_fields = ['@title', '@authors__username']
