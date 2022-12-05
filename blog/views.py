@@ -1,19 +1,19 @@
 from django.utils import timezone
 from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, UpdateAPIView, CreateAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from blog.models import Blogs, Posts, Tags
+from blog.models import Blogs, Posts, Tags, Comments
 from .serializers import (
-    UserSerializer, BlogSerializer, AddAuthorToBlogSerializer,
+    BlogSerializer, AddAuthorToBlogSerializer,
     TagSerializer, PostSerializer, CommentsSerializer,
     CreateSubscriptionSerializer
 )
 from users.permissions import (
     IsAuthenticatedAndOwner,
-    IsAuthenticatedAndAuthor,
     IsUserAdmin,
     IsUserAuthorOrBlogOwner,
     IsAdminOrReadOnly
@@ -181,4 +181,16 @@ class CreateCommentView(CreateAPIView):
 
         serializer.validate_data['author'] = self.request.user
         serializer.validate_data['post'] = post
+        serializer.save()
+
+
+class CommentView(ModelViewSet):
+    queryset = Comments.objects.all()
+    permission_classes = [IsAdminOrReadOnly]
+    serializer_class = CommentsSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('post',)
+
+    def perform_create(self, serializer):
+        serializer.validate_data['author'] = self.request.user
         serializer.save()
