@@ -1,8 +1,5 @@
-from rest_framework.decorators import permission_classes
-from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import UpdateAPIView, ListAPIView, UpdateAPIView
 from rest_framework.viewsets import ModelViewSet
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from blog.models import Blogs, Posts
@@ -18,16 +15,12 @@ from users.permissions import (
     IsAdminOrReadOnly
 )
 from .utils import PostFilter
+from .mixins import MixinFilterData
 
 
-class BlogView(ModelViewSet):
+class BlogView(ModelViewSet, MixinFilterData):
     queryset = Blogs
     serializer_class = BlogSerializer
-    filter_backends = (
-        DjangoFilterBackend,
-        SearchFilter,
-        OrderingFilter
-    )
     filter_fields = ['created_at']
     ordering_field = ['title', 'created_at']
 
@@ -52,14 +45,9 @@ class SubscribeToBlogView(UpdateAPIView):
     http_method_names = ['patch']
 
 
-class FavoriteListBlogsView(ListAPIView):
+class FavoriteListBlogsView(ListAPIView, MixinFilterData):
     permission_classes = [IsAuthenticated]
     serializer_class = BlogSerializer
-    filter_backend = (
-        DjangoFilterBackend,
-        SearchFilter,
-        OrderingFilter,
-    )
     filter_fields = ['created_at']
     ordering_fields = ['title', 'created_at']
 
@@ -80,14 +68,9 @@ class AddAuthorsToBlogView(UpdateAPIView):
         )
 
 
-class ListPostsOfBlogView(ListAPIView):
+class ListPostsOfBlogView(ListAPIView, MixinFilterData):
     permission_classes = [AllowAny]
     serializer_class = PostSerializer
-    filter_backend = (
-        DjangoFilterBackend,
-        SearchFilter,
-        OrderingFilter,
-    )
     filterset_class = PostFilter
     ordering_fields = ['title', 'created_at', 'likes']
 
@@ -99,3 +82,13 @@ class ListPostsOfBlogView(ListAPIView):
                 blog=self.kwargs['pk']
             )
         return queryset
+
+
+class ListUserPostsView(ListAPIView, MixinFilterData):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PostSerializer
+    filterset_class = PostFilter
+    ordering_fields = ['title', 'created_at', 'likes']
+
+    def get_queryset(self):
+        return Posts.objects.filter(authors=self.request.user.id)

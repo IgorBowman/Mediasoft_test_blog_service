@@ -3,7 +3,7 @@ from rest_framework.routers import SimpleRouter
 
 from blog.views import (
     BlogView, SubscribeToBlogView, FavoriteListBlogsView,
-    AddAuthorsToBlogView, ListPostsOfBlogView
+    AddAuthorsToBlogView, ListPostsOfBlogView, ListUserPostsView,
 )
 
 router = SimpleRouter()
@@ -18,6 +18,7 @@ urlpatterns = [
          name='add-authors-to-blog'),
     path('blogs/<int:pk>/posts', ListPostsOfBlogView.as_view(),
          name='posts-of-blog'),
+    path('posts/my', ListUserPostsView.as_view(), name='my-posts'),
 ]
 
 urlpatterns += router.urls
