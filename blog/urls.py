@@ -4,7 +4,7 @@ from rest_framework.routers import SimpleRouter
 from blog.views import (
     BlogView, SubscribeToBlogView, FavoriteListBlogsView,
     AddAuthorsToBlogView, ListPostsOfBlogView, ListUserPostsView,
-    PostsView, LikePostView, TagsView,
+    PostsView, LikePostView, TagsView, CreateCommentView,
 )
 
 router = SimpleRouter()
@@ -23,6 +23,8 @@ urlpatterns = [
          name='posts-of-blog'),
     path('posts/my', ListUserPostsView.as_view(), name='my-posts'),
     path('posts/<int:pk>/add-like', LikePostView.as_view(), name='like-post'),
+    path('posts/<int:pk>/add-comment', CreateCommentView.as_view(),
+         name='create-comment-to-post'),
 ]
 
 urlpatterns += router.urls

@@ -1,7 +1,7 @@
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.generics import ListAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, UpdateAPIView, CreateAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
@@ -169,3 +169,16 @@ class TagsView(ModelViewSet):
     queryset = Tags.objects.order_by('title').all()
     permission_classes = [IsAdminOrReadOnly]
     serializer_class = TagSerializer
+
+
+class CreateCommentView(CreateAPIView):
+    queryset = Posts.objects.all()
+    permission_classes = [IsAuthenticated | IsUserAdmin]
+    serializer_class = CommentsSerializer
+
+    def perform_create(self, serializer):
+        post = self.get_object()
+
+        serializer.validate_data['author'] = self.request.user
+        serializer.validate_data['post'] = post
+        serializer.save()
