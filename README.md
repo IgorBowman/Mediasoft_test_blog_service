@@ -23,9 +23,9 @@
 
 ### Подготовительные действия
 * Клонировать проект ```git clone```
-* Создать окружение ```pip install virtualenv ```
-                       ```python3 -m venv venv``` 
-                        ```venv/bin/activate```
+  * Создать окружение ```pip install virtualenv ```
+                      ```python3 -m venv venv``` 
+                      ```venv/bin/activate```
 * Установить зависимости```pip install -e requirements.txt```
 * Создать БД PostgreSQL
 * В файл .env.example внести необходимые настройки
